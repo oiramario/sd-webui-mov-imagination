@@ -9,11 +9,11 @@ from modules import script_callbacks, devices, shared
 from modules.ui import save_style_symbol
 from modules.ui_common import folder_symbol
 
-from scripts.scaler import Scaler
+from scripts.imagination import Imagagination
 
 # directory of the outputs
 sd_path = pathlib.Path().absolute()
-output_path = os.path.join(sd_path, 'outputs', 'upscaler')
+output_path = os.path.join(sd_path, 'outputs', 'imagination')
 if not os.path.exists(output_path):
     os.makedirs(output_path)
 
@@ -52,12 +52,12 @@ def generate(src_video, scale_factor, sampling_steps):
     vram = mem_stats['total'] / 1024
     low_vram = vram <= 12
     work_dir = work_folder(src_video)
-    scaler = Scaler(low_vram)
-    return scaler.process_video(src_video, work_dir, scale_factor, sampling_steps)
+    script_proc = Imagagination(low_vram)
+    return script_proc.process_video(src_video, work_dir, scale_factor, sampling_steps)
 
 
 def interrupt():
-    Scaler.interrupt_operation = True
+    Imagagination.interrupt_operation = True
     shared.state.interrupt()
 
 
@@ -67,9 +67,11 @@ def on_ui_tabs():
             with gr.Column():
                 with gr.Row():
                     src_video = gr.Video(interactive=True, include_audio=True)
-                with gr.Row():
-                    scale_factor = gr.Slider(minimum=1, maximum=10, value=2.0, step=0.1, label='Scale factor:')
-                    sampling_steps = gr.Slider(minimum=20, maximum=100, value=20, step=1, label='Sampling steps:')
+                with gr.Tabs():
+                    with gr.TabItem('stage 1'):
+                        scale_factor = gr.Slider(minimum=1, maximum=10, value=2.0, step=0.1, label='Scale factor:')
+                    with gr.TabItem('stage 2'):
+                        sampling_steps = gr.Slider(minimum=20, maximum=100, value=20, step=1, label='Sampling steps:')
                 with gr.Row():
                     btn_generate = gr.Button('Generate', variant='primary')
                     btn_interrupt = gr.Button('Interrupt')
@@ -103,7 +105,7 @@ def on_ui_tabs():
             inputs=dst_video,
             outputs=download_file)
 
-    return (upscaler_interface, "Upscaler", "upscaler_interface"),
+    return (upscaler_interface, "mov-imagination", "mov_imagination_interface"),
 
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

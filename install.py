@@ -1,6 +1,28 @@
-import launch
+import os
+from launch import git_clone, is_installed, run_pip
 
-# TODO: add pip dependency if need extra module only on extension
 
-# if not launch.is_installed("aitextgen"):
-#     launch.run_pip("install aitextgen==0.6.0", "requirements for MagicPrompt")
+def main():
+    packages = [
+        'webuiapi',
+        'peakutils',
+        'ffmpeg'
+    ]
+    for m in packages:
+        try:
+            if not is_installed(m):
+                run_pip(f'install {m}', f'mov-scale: {m}')
+        except Exception as e:
+            print(e)
+
+    sd_root = os.getcwd()
+    sd_extensions = os.path.join(sd_root, 'extensions')
+
+    # git_clone('https://github.com/pkuliyi2015/sd-webui-stablesr.git', 
+    #           os.path.join(sd_extensions, 'sd-webui-stablesr'), "StableSR")
+    # git_clone('https://github.com/pkuliyi2015/multidiffusion-upscaler-for-automatic1111.git', 
+    #           os.path.join(sd_extensions, 'multidiffusion-upscaler-for-automatic1111'), "Tiled Diffusion & VAE")
+    
+
+if __name__ == "__main__":
+    main()

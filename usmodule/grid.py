@@ -30,15 +30,15 @@ def extract(keyframes_path, frame_width, frame_height, grids_path, grid_rows=2, 
         grid_image.paste(frame, (x, y))
 
         if (i + 1) % (grid_size) == 0:
-            pbar.update(1)
             # 保存合并后的图像
             output_filename = os.path.join(grids_path, f'{((i + 1) // (grid_size)):05d}.png')
             grid_image.save(output_filename)
             # grid_image = Image.new('RGB', (grid_width, grid_height))
+            pbar.update(1)
 
     # 如果还有剩余的图像未存储
     if remainder != 0:
-        pbar.update(1)
         # 保存剩余的合并图像
-        output_filename = os.path.join(grids_path, f'grid{quotient + 1:05d}.png')
+        output_filename = os.path.join(grids_path, f'{quotient + 1:05d}.png')
         grid_image.save(output_filename)
+        pbar.update(1)
